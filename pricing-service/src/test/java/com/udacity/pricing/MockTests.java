@@ -1,5 +1,6 @@
 package com.udacity.pricing;
 
+
 import com.udacity.pricing.domain.price.PriceRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,20 +8,22 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ApplicationTests {
+public class MockTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,7 +32,7 @@ public class ApplicationTests {
     private PriceRepository repository;
 
     @Before
-    public void deleteAllBeforeTests() throws Exception {
+    public void deleteAllBeforeTests() {
         repository.deleteAll();
     }
 
@@ -39,7 +42,6 @@ public class ApplicationTests {
                 .andExpect(jsonPath("$._links.prices").exists());
     }
 
-
     @Test
     public void shouldCreateEntity() throws Exception {
         mockMvc.perform(post("/prices").content(
@@ -48,8 +50,6 @@ public class ApplicationTests {
     }
 
     @Test
-    // to reviewer:
-    // I don't know how to populate prices.json file so no further andExpect() chain is called.
     public void getAllPrices() throws Exception {
         mockMvc.perform(get("/prices"))
                 .andDo(print())
